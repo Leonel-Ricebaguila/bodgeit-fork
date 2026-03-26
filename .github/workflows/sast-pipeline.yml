@@ -26,16 +26,18 @@ jobs:
         distribution: 'temurin'
 
     - name: Inicializar CodeQL (Reglas Estrictas)
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: java
-        # Aplicamos el set de reglas extendido para forzar el bloqueo en inyecciones SQL y XSS
         queries: security-extended,security-and-quality
 
+    - name: Parche para compilación Legacy (Crear carpeta faltante)
+      run: mkdir -p build/WEB-INF/classes
+
     - name: Construcción Automática
-      uses: github/codeql-action/autobuild@v2
+      uses: github/codeql-action/autobuild@v3
 
     - name: Ejecutar Análisis SAST y Quality Gate
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
       with:
         category: "/language:java"
