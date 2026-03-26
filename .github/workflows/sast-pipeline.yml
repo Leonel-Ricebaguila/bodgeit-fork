@@ -31,8 +31,10 @@ jobs:
         languages: java
         queries: security-extended,security-and-quality
 
-    - name: Parche para compilación Legacy (Crear carpeta faltante)
-      run: mkdir -p build/WEB-INF/classes
+    - name: Parche para compilación Legacy (Carpetas y Versión Java)
+      run: |
+        mkdir -p build/WEB-INF/classes
+        sed -i 's/1.5/1.8/g' build.xml
 
     - name: Construcción Automática
       uses: github/codeql-action/autobuild@v3
