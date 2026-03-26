@@ -1,0 +1,41 @@
+name: "SAST Quality Gate (CodeQL)"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  analyze:
+    name: Análisis de Seguridad Estático (SAST)
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+    - name: Checkout del repositorio
+      uses: actions/checkout@v3
+
+    - name: Configurar JDK (Entorno Java para BodgeIt)
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    - name: Inicializar CodeQL (Reglas Estrictas)
+      uses: github/codeql-action/init@v2
+      with:
+        languages: java
+        # Aplicamos el set de reglas extendido para forzar el bloqueo en inyecciones SQL y XSS
+        queries: security-extended,security-and-quality
+
+    - name: Construcción Automática
+      uses: github/codeql-action/autobuild@v2
+
+    - name: Ejecutar Análisis SAST y Quality Gate
+      uses: github/codeql-action/analyze@v2
+      with:
+        category: "/language:java"
